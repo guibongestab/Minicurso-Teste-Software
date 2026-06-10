@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Library API — Frontend</title>
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --bg: #f4f6fb;
+      --surface: #ffffff;
+      --primary: #4f6ef7;
+      --primary-dark: #3a55d4;
+      --danger: #e74c3c;
+      --danger-dark: #c0392b;
+      --success: #27ae60;
+      --text: #1a1a2e;
+      --muted: #6b7280;
+      --border: #e2e8f0;
+      --radius: 10px;
+      --shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    }
+
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    header {
+      background: var(--primary);
+      color: #fff;
+      padding: 20px 32px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      box-shadow: 0 2px 8px rgba(79, 110, 247, 0.3);
+    }
+
+    header h1 {
+      font-size: 1.4rem;
+      font-weight: 700;
+    }
+
+    header span {
+      font-size: 1.6rem;
+    }
+
+    .container {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 28px 20px;
+    }
+
+    /* Toast */
+    #toast {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 999;
+      background: var(--success);
+      color: #fff;
+      padding: 12px 20px;
+      border-radius: var(--radius);
+      font-size: 0.9rem;
+      box-shadow: var(--shadow);
+      opacity: 0;
+      transition: opacity 0.3s;
+      pointer-events: none;
+    }
+
+    #toast.error {
+      background: var(--danger);
+    }
+
+    #toast.show {
+      opacity: 1;
+    }
+
+    /* Card */
+    .card {
+      background: var(--surface);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+
+    .card h2 {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 16px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    /* Form */
+    .form-row {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      flex: 1;
+      min-width: 180px;
+    }
+
+    label {
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--muted);
+    }
+
+    input {
+      border: 1.5px solid var(--border);
+      border-radius: 7px;
+      padding: 9px 12px;
+      font-size: 0.95rem;
+      color: var(--text);
+      transition: border-color 0.2s;
+      outline: none;
+    }
+
+    input:focus {
+      border-color: var(--primary);
+    }
+
+    .btn-row {
+      display: flex;
+      gap: 10px;
+      margin-top: 16px;
+      flex-wrap: wrap;
+    }
+
+    button {
+      padding: 9px 20px;
+      border: none;
+      border-radius: 7px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: #fff;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-dark);
+    }
+
+    .btn-danger {
+      background: var(--danger);
+      color: #fff;
+    }
+
+    .btn-danger:hover {
+      background: var(--danger-dark);
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--primary);
+      border: 1.5px solid var(--primary);
+    }
+
+    .btn-ghost:hover {
+      background: #eef1fe;
+    }
+
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    /* Table */
+    .table-wrapper {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+    }
+
+    th {
+      background: var(--bg);
+      text-align: left;
+      padding: 10px 14px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--muted);
+      border-bottom: 2px solid var(--border);
+    }
+
+    td {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: middle;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tr:hover td {
+      background: #f8f9ff;
+    }
+
+    .id-cell {
+      font-size: 0.75rem;
+      color: var(--muted);
+      font-family: monospace;
+      max-width: 120px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .action-btn {
+      padding: 5px 12px;
+      font-size: 0.8rem;
+      border-radius: 6px;
+      margin-right: 4px;
+    }
+
+    /* Pagination */
+    .pagination {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      justify-content: center;
+      margin-top: 16px;
+    }
+
+    .pagination button {
+      padding: 7px 14px;
+      font-size: 0.85rem;
+    }
+
+    .page-info {
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+
+    /* Empty state */
+    .empty {
+      text-align: center;
+      color: var(--muted);
+      padding: 32px 0;
+      font-size: 0.95rem;
+    }
+
+    /* Modal */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.4);
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-overlay.open {
+      display: flex;
+    }
+
+    .modal {
+      background: var(--surface);
+      border-radius: var(--radius);
+      padding: 28px;
+      width: 100%;
+      max-width: 480px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
+    }
+
+    .modal h3 {
+      font-size: 1.1rem;
+      margin-bottom: 18px;
+    }
+
+    .modal .btn-row {
+      justify-content: flex-end;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div id="toast"></div>
+
+  <header>
+    <span>📚</span>
+    <h1>Library API — Gerenciador de Livros</h1>
+  </header>
+
+  <div class="container">
+
+    <!-- CRIAR LIVRO -->
+    <div class="card">
+      <h2>Cadastrar Livro</h2>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="title">Título</label>
+          <input id="title" placeholder="Ex: Dom Casmurro" />
+        </div>
+        <div class="form-group">
+          <label for="author">Autor</label>
+          <input id="author" placeholder="Ex: Machado de Assis" />
+        </div>
+        <div class="form-group">
+          <label for="publishedDate">Data de Publicação</label>
+          <input id="publishedDate" type="date" />
+        </div>
+      </div>
+      <div class="btn-row">
+        <button class="btn-primary" onclick="createBook()">Cadastrar</button>
+        <button class="btn-ghost" onclick="clearForm()">Limpar</button>
+      </div>
+    </div>
+
+    <!-- BUSCAR POR ID -->
+    <div class="card">
+      <h2>Buscar Livro por ID</h2>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="searchId">UUID do Livro</label>
+          <input id="searchId" placeholder="Ex: 3fa85f64-5717-4562-b3fc-2c963f66afa6" />
+        </div>
+      </div>
+      <div class="btn-row">
+        <button class="btn-primary" onclick="getBookById()">Buscar</button>
+      </div>
+      <div id="singleResult" style="margin-top:14px;"></div>
+    </div>
+
+    <!-- LISTA DE LIVROS -->
+    <div class="card">
+      <div
+        style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:16px; padding-bottom:10px; border-bottom:1px solid var(--border);">
+        <h2 style="margin:0; border:none; padding:0;">Todos os Livros</h2>
+        <div style="display:flex; gap:8px; align-items:center;">
+          <label style="font-size:0.82rem; font-weight:600; color:var(--muted);">Itens por página:</label>
+          <select id="pageSize" onchange="loadBooks(0)"
+            style="border:1.5px solid var(--border); border-radius:7px; padding:6px 10px; font-size:0.9rem; cursor:pointer;">
+            <option value="5">5</option>
+            <option value="10" selected>10</option>
+            <option value="20">20</option>
+          </select>
+          <button class="btn-ghost" onclick="loadBooks(currentPage)">Atualizar</button>
+        </div>
+      </div>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Título</th>
+              <th>Autor</th>
+              <th>Publicação</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody id="booksTable">
+            <tr>
+              <td colspan="5" class="empty">Carregando...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="pagination">
+        <button class="btn-ghost" onclick="loadBooks(currentPage - 1)" id="btnPrev">Anterior</button>
+        <span class="page-info" id="pageInfo">—</span>
+        <button class="btn-ghost" onclick="loadBooks(currentPage + 1)" id="btnNext">Próxima</button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- MODAL DE EDIÇÃO -->
+  <div class="modal-overlay" id="editModal">
+    <div class="modal">
+      <h3>Editar Livro</h3>
+      <input type="hidden" id="editId" />
+      <div class="form-group" style="margin-bottom:12px;">
+        <label for="editTitle">Título *</label>
+        <input id="editTitle" placeholder="Título" />
+      </div>
+      <div class="form-group" style="margin-bottom:12px;">
+        <label for="editAuthor">Autor</label>
+        <input id="editAuthor" placeholder="Autor" />
+      </div>
+      <div class="form-group" style="margin-bottom:12px;">
+        <label for="editDate">Data de Publicação</label>
+        <input id="editDate" type="date" />
+      </div>
+      <div class="btn-row">
+        <button class="btn-ghost" onclick="closeEditModal()">Cancelar</button>
+        <button class="btn-primary" onclick="saveEdit()">Salvar</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const API = 'http://localhost:8080/books';
+    let currentPage = 0;
+
+    // ── Utilitários ──────────────────────────────────────────────
+
+    function toast(msg, isError = false) {
+      const el = document.getElementById('toast');
+      el.textContent = msg;
+      el.className = isError ? 'error show' : 'show';
+      clearTimeout(el._t);
+      el._t = setTimeout(() => el.className = '', 3000);
+    }
+
+    function fmt(dateStr) {
+      if (!dateStr) return '—';
+      const [y, m, d] = dateStr.split('-');
+      return `${d}/${m}/${y}`;
+    }
+
+    // ── Criar livro ──────────────────────────────────────────────
+
+    async function createBook() {
+      const title = document.getElementById('title').value.trim();
+      const author = document.getElementById('author').value.trim();
+      const publishedDate = document.getElementById('publishedDate').value;
+      if (!title) { toast('Título é obrigatório.', true); return; }
+      try {
+        const res = await fetch(API, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ title, author: author || null, publishedDate: publishedDate || null })
+        });
+        if (!res.ok) throw await res.json();
+        toast('Livro cadastrado com sucesso!');
+        clearForm();
+        loadBooks(0);
+      } catch (e) {
+        toast(formatError(e), true);
+      }
+    }
+
+    function clearForm() {
+      ['title', 'author', 'publishedDate'].forEach(id => document.getElementById(id).value = '');
+    }
+
+    // ── Buscar por ID ────────────────────────────────────────────
+
+    async function getBookById() {
+      const id = document.getElementById('searchId').value.trim();
+      const box = document.getElementById('singleResult');
+      if (!id) { toast('Informe um UUID válido.', true); return; }
+      try {
+        const res = await fetch(`${API}/${id}`);
+        if (!res.ok) throw await res.json();
+        const b = await res.json();
+        box.innerHTML = `
+        <table style="width:100%; font-size:0.9rem;">
+          <tr><th style="width:140px; text-align:left; padding:8px 10px; background:var(--bg);">ID</th><td style="padding:8px 10px; font-family:monospace; font-size:0.8rem;">${b.id}</td></tr>
+          <tr><th style="text-align:left; padding:8px 10px; background:var(--bg);">Título</th><td style="padding:8px 10px;">${b.title}</td></tr>
+          <tr><th style="text-align:left; padding:8px 10px; background:var(--bg);">Autor</th><td style="padding:8px 10px;">${b.author || '—'}</td></tr>
+          <tr><th style="text-align:left; padding:8px 10px; background:var(--bg);">Publicação</th><td style="padding:8px 10px;">${fmt(b.publishedDate)}</td></tr>
+        </table>`;
+      } catch (e) {
+        box.innerHTML = `<p style="color:var(--danger); font-size:0.9rem;">${formatError(e)}</p>`;
+      }
+    }
+
+    // ── Listar livros (paginado) ──────────────────────────────────
+
+    async function loadBooks(page = 0) {
+      const size = document.getElementById('pageSize').value;
+      if (page < 0) return;
+      try {
+        const res = await fetch(`${API}?page=${page}&size=${size}&sort=title,asc`);
+        if (!res.ok) throw await res.json();
+        const data = await res.json();
+        currentPage = data.number;
+        renderTable(data.content);
+        renderPagination(data);
+      } catch (e) {
+        document.getElementById('booksTable').innerHTML =
+          `<tr><td colspan="5" class="empty" style="color:var(--danger);">${formatError(e)}</td></tr>`;
+      }
+    }
+
+    function renderTable(books) {
+      const tbody = document.getElementById('booksTable');
+      if (!books.length) {
+        tbody.innerHTML = '<tr><td colspan="5" class="empty">Nenhum livro encontrado.</td></tr>';
+        return;
+      }
+      tbody.innerHTML = books.map(b => `
+      <tr>
+        <td class="id-cell" title="${b.id}">${b.id}</td>
+        <td>${b.title}</td>
+        <td>${b.author || '—'}</td>
+        <td>${fmt(b.publishedDate)}</td>
+        <td>
+          <button class="btn-ghost action-btn" onclick="openEditModal('${b.id}','${esc(b.title)}','${esc(b.author || '')}','${b.publishedDate || ''}')">Editar</button>
+          <button class="btn-danger action-btn" onclick="deleteBook('${b.id}')">Excluir</button>
+        </td>
+      </tr>`).join('');
+    }
+
+    function renderPagination(data) {
+      document.getElementById('pageInfo').textContent =
+        `Página ${data.number + 1} de ${data.totalPages || 1}  (${data.totalElements} livro${data.totalElements !== 1 ? 's' : ''})`;
+      document.getElementById('btnPrev').disabled = data.first;
+      document.getElementById('btnNext').disabled = data.last;
+    }
+
+    // ── Editar livro ─────────────────────────────────────────────
+
+    function openEditModal(id, title, author, date) {
+      document.getElementById('editId').value = id;
+      document.getElementById('editTitle').value = title;
+      document.getElementById('editAuthor').value = author;
+      document.getElementById('editDate').value = date;
+      document.getElementById('editModal').classList.add('open');
+    }
+
+    function closeEditModal() {
+      document.getElementById('editModal').classList.remove('open');
+    }
+
+    async function saveEdit() {
+      const id = document.getElementById('editId').value;
+      const title = document.getElementById('editTitle').value.trim();
+      const author = document.getElementById('editAuthor').value.trim();
+      const publishedDate = document.getElementById('editDate').value;
+      if (!title) { toast('Título é obrigatório.', true); return; }
+      try {
+        const res = await fetch(`${API}/${id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ title, author: author || null, publishedDate: publishedDate || null })
+        });
+        if (!res.ok) throw await res.json();
+        toast('Livro atualizado!');
+        closeEditModal();
+        loadBooks(currentPage);
+      } catch (e) {
+        toast(formatError(e), true);
+      }
+    }
+
+    // ── Excluir livro ────────────────────────────────────────────
+
+    async function deleteBook(id) {
+      if (!confirm('Confirma a exclusão deste livro?')) return;
+      try {
+        const res = await fetch(`${API}/${id}`, { method: 'DELETE' });
+        if (!res.ok) throw await res.json();
+        toast('Livro excluído.');
+        loadBooks(currentPage);
+      } catch (e) {
+        toast(formatError(e), true);
+      }
+    }
+
+    // ── Helpers ──────────────────────────────────────────────────
+
+    function formatError(e) {
+      if (e && e.message) return e.message;
+      if (e && e.errors) return e.errors.map(x => x.message).join(', ');
+      return 'Erro ao comunicar com a API.';
+    }
+
+    function esc(s) { return s.replace(/'/g, "\\'"); }
+
+    // Fechar modal clicando fora
+    document.getElementById('editModal').addEventListener('click', function (e) {
+      if (e.target === this) closeEditModal();
+    });
+
+    // Carrega ao iniciar
+    loadBooks(0);
+  </script>
+</body>
+
+</html>

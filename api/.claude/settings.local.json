@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(./mvnw dependency:resolve -q)",
+      "Bash(chmod +x /Users/wallace/Documents/api/start.sh)"
+    ]
+  }
+}
