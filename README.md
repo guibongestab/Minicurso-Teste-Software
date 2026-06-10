@@ -2,6 +2,17 @@
 
 API REST para gerenciamento de livros, desenvolvida com Spring Boot. Inclui frontend simples em HTML/CSS/JS.
 
+# Como abrir o backend do projeto?
+1. abrir terminal na pasta backend
+2. usar comando 'java -version'
+3. depois comando 'mvnw spring-boot:run' ou './mvnw spring-boot:run'
+4. e acessa 'http://localhost:8080/swagger-ui/index.html'
+
+# Como acessar o Frontend do projeto?
+1. verificar se tem node com comando 'node --version'
+2. executar pelo terminal da pasta o .bat (Windows) ou .sh (Linux)
+
+
 ## Tecnologias
 
 - **Backend:** Java 21, Spring Boot 4.0.6, Spring Data JPA, Flyway, H2 (in-memory), Swagger/OpenAPI
