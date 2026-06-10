@@ -10,7 +10,7 @@ API REST para gerenciamento de livros, desenvolvida com Spring Boot. Inclui fron
 
 # Como acessar o Frontend do projeto?
 1. verificar se tem node com comando 'node --version'
-2. executar pelo terminal da pasta o .bat (Windows) ou .sh (Linux)
+2. executar pelo terminal da pasta api o .bat (Windows) ou .sh (Linux)
 
 
 ## Tecnologias
